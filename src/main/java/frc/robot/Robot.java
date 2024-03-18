@@ -29,13 +29,28 @@ public class Robot extends TimedRobot {
   private VictorSPX LeftFront = new VictorSPX(2);
   private VictorSPX LeftRear = new VictorSPX(3);
 
-  private Joystick joy1 = new Joystick(0);
+  private Joystick driverJoystick = new Joystick(0);
 
   public static final int leftMotorID = 15;
   public static final int rightMotorID = 14;
 
   CANSparkMax leftMotor = new CANSparkMax(leftMotorID, MotorType.kBrushless);
   CANSparkMax rightMotor = new CANSparkMax(rightMotorID, MotorType.kBrushless);
+
+    // DriveTrain Varible & Control
+    double speed = -driverJoystick.getRawAxis(5) * 0.3;
+    double turn = driverJoystick.getRawAxis(0) * 0.3;
+
+    // DriveTrain Calcuation
+    double left = speed + turn;
+    double right = speed - turn;
+
+    // ClimbingArm Varible & Control
+    double Pull = driverJoystick.getRawAxis(3) * 0.3;
+    double Push = driverJoystick.getRawAxis(2) * 0.3;
+
+    // ClimbingArm Calculation
+    double climbSpeed = Pull - Push;
 
   @Override
   public void robotInit() {
@@ -57,32 +72,13 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-    // DriveTrain Control
-    double speed = -joy1.getRawAxis(5) * 0.3;
-    double turn = joy1.getRawAxis(0) * 0.3;
-
-    // ClimbingArm Control
-    double Pull = joy1.getRawAxis(3) * 0.3;
-    double Push = joy1.getRawAxis(2) * 0.3;
-
-    // DriveTrain Varibles
-    double left = speed + turn;
-    double right = speed - turn;
-
-    // ClimbingArm Varible
-    double climbSpeed = Pull - Push;
-
-    /* Alternative Way
-     * rightMotor.follow(leftMotor);
-    */
-
-    // DriveTrain
+    // DriveTrain Motor Setting
     RightFront.set(ControlMode.PercentOutput, 0 + right);
     RightRear.set(ControlMode.PercentOutput, 0 + right);
     LeftFront.set(ControlMode.PercentOutput, 0 + left);
     LeftRear.set(ControlMode.PercentOutput, 0 + left);
 
-    // ClimbingArm
+    // ClimbingArm Motor Setting
     rightMotor.set(0 + climbSpeed);
     leftMotor.set(0 + climbSpeed);
 
