@@ -10,15 +10,17 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.motorcontrol.Spark;
+// import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+/*
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkRelativeEncoder;
 import com.revrobotics.SparkPIDController;
+*/
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -57,9 +59,12 @@ public class Robot extends TimedRobot {
   CANSparkMax ClimberRight = new CANSparkMax(rightMotorID, MotorType.kBrushless);
 
   // Encoders & PID
+
+  /* Remove after use
   RelativeEncoder climberEncoder;
   SparkPIDController SparkPIDController;
   public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
+  */
 
   /*---Calcuations & Control Assignments---*/
   // DriveTrain Varible & Control
@@ -83,6 +88,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     /*--Encoder & PID Stuff (Still in Progress)--*/
+    /* Remove after use
     climberEncoder = ClimberLeft.getEncoder(SparkRelativeEncoder.Type.kQuadrature, 4096);
     ClimberLeft.restoreFactoryDefaults(); // resets to 0 everytime drivestation is booted up
     SparkPIDController = ClimberLeft.getPIDController();
@@ -114,6 +120,7 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Max Output", kMaxOutput);
     SmartDashboard.putNumber("Min Output", kMinOutput);
     SmartDashboard.putNumber("Set Rotations", 0);
+    */
   }
 
   @Override
@@ -157,6 +164,7 @@ public class Robot extends TimedRobot {
     double rotations = SmartDashboard.getNumber("Set Rotations", 0);
 
     // if PID coefficients on SmartDashboard have changed, write new values to controller
+    /* Remove after use
     if((p != kP)) { SparkPIDController.setP(p); kP = p; }
     if((i != kI)) { SparkPIDController.setI(i); kI = i; }
     if((d != kD)) { SparkPIDController.setD(d); kD = d; }
@@ -181,10 +189,12 @@ public class Robot extends TimedRobot {
      *  com.revrobotics.CANSparkMax.ControlType.kVelocity
      *  com.revrobotics.CANSparkMax.ControlType.kVoltage
      */
+    /* Remove after use
     SparkPIDController.setReference(rotations, CANSparkMax.ControlType.kPosition);
     
     SmartDashboard.putNumber("SetPoint", rotations);
     SmartDashboard.putNumber("ProcessVariable", climberEncoder.getPosition());
+    */
   }
 
   @Override
