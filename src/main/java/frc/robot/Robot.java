@@ -5,6 +5,7 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -29,47 +30,62 @@ public class Robot extends TimedRobot {
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
-   */
+   */ 
+
+  /*---Part to ID Assignments---*/
+  // DriveTrain Motors
   private VictorSPX RightFront = new VictorSPX(0);
   private VictorSPX RightRear = new VictorSPX(1);
   private VictorSPX LeftFront = new VictorSPX(2);
   private VictorSPX LeftRear = new VictorSPX(3);
 
+  // Shooting Wheel Motors
+  private TalonSRX RightShooterWheel = new TalonSRX(4);
+  private TalonSRX LeftShooterWheel = new TalonSRX(7);
+
+  // Shooting Arm Motors
+  private TalonSRX RightShooterArm = new TalonSRX(5);
+  private TalonSRX LeftShooterArm = new TalonSRX(6);
+
+  // PS4 Joystick
   private Joystick driverJoystick = new Joystick(0);
 
+  // Climbing Arm Motors
   public static final int leftMotorID = 15;
   public static final int rightMotorID = 14;
+  CANSparkMax ClimberLeft = new CANSparkMax(leftMotorID, MotorType.kBrushless);
+  CANSparkMax ClimberRight = new CANSparkMax(rightMotorID, MotorType.kBrushless);
 
-  CANSparkMax leftMotor = new CANSparkMax(leftMotorID, MotorType.kBrushless);
-  CANSparkMax rightMotor = new CANSparkMax(rightMotorID, MotorType.kBrushless);
-
+  // Encoders & PID
   RelativeEncoder climberEncoder;
   SparkPIDController SparkPIDController;
   public double kP, kI, kD, kIz, kFF, kMaxOutput, kMinOutput;
 
-    // DriveTrain Varible & Control
-    double speed = -driverJoystick.getRawAxis(5) * 0.3;
-    double turn = driverJoystick.getRawAxis(0) * 0.3;
+  /*---Calcuations & Control Assignments---*/
+  // DriveTrain Varible & Control
+  double speed = -driverJoystick.getRawAxis(5) * 0.3;
+  double turn = driverJoystick.getRawAxis(0) * 0.3;
 
-    // DriveTrain Calcuation
-    double left = speed + turn;
-    double right = speed - turn;
+  // DriveTrain Calcuation
+  double left = speed + turn;
+  double right = speed - turn;
 
-    // ClimbingArm Varible & Control
-    double Pull = driverJoystick.getRawAxis(3) * 0.3;
-    double Push = driverJoystick.getRawAxis(2) * 0.3;
+  // Climbing Arm Varible & Control
+  double Pull = driverJoystick.getRawAxis(3) * 0.3;
+  double Push = driverJoystick.getRawAxis(2) * 0.3;
 
-    // ClimbingArm Calculation
-    double climbSpeed = Pull - Push; // when ClimbingArm is extending, Pull = 1
+  // Climbing Arm Calculation
+  double climbSpeed = Pull - Push; // when ClimbingArm is extending, Pull = 1
+
+  // Shooting Wheel Variable & Control
+  // double Lift = driverJoystick.getRawButton()
     
   @Override
   public void robotInit() {
-    climberEncoder = leftMotor.getEncoder(SparkRelativeEncoder.Type.kQuadrature, 4096);
-
-    leftMotor.restoreFactoryDefaults();
-
-    SparkPIDController = leftMotor.getPIDController();
-
+    /*--Encoder & PID Stuff (Still in Progress)--*/
+    climberEncoder = ClimberLeft.getEncoder(SparkRelativeEncoder.Type.kQuadrature, 4096);
+    ClimberLeft.restoreFactoryDefaults(); // resets to 0 everytime drivestation is booted up
+    SparkPIDController = ClimberLeft.getPIDController();
     SparkPIDController.setFeedbackDevice(climberEncoder);
 
     // PID coefficients
@@ -114,18 +130,23 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-
-    // DriveTrain Motor Setting
+    /*--Motor Power Settings*/
+    // DriveTrain Setting
     RightFront.set(ControlMode.PercentOutput, 0 + right);
     RightRear.set(ControlMode.PercentOutput, 0 + right);
     LeftFront.set(ControlMode.PercentOutput, 0 + left);
     LeftRear.set(ControlMode.PercentOutput, 0 + left);
 
-    // ClimbingArm Motor Setting
-    rightMotor.set(0 + climbSpeed);
-    leftMotor.set(0 + climbSpeed);
+    // Climbing Arm Setting
+    ClimberRight.set(0 + climbSpeed);
+    ClimberLeft.set(0 + climbSpeed);
 
-        // read PID coefficients from SmartDashboard
+    // Shooting Wheel Setting
+    // RightShooterWheel.set(0);
+    // LeftShooterWheel.set(0);
+
+    /*--PID stuff (Still in Progress)--*/
+    // read PID coefficients from SmartDashboard
     double p = SmartDashboard.getNumber("P Gain", 0);
     double i = SmartDashboard.getNumber("I Gain", 0);
     double d = SmartDashboard.getNumber("D Gain", 0);
